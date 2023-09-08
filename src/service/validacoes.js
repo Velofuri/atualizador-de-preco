@@ -1,4 +1,7 @@
-import { verificaSeHePacote } from '../model/consultasDB.js';
+import {
+  verificaSeHePacote,
+  verificaSeProdutoPertenceAPacote,
+} from '../model/consultasDB.js';
 
 export function verificaCodigoEPreco(produtoUpload, produtosBD) {
   const codigoExiste = produtosBD.some(
@@ -7,41 +10,69 @@ export function verificaCodigoEPreco(produtoUpload, produtosBD) {
   if (codigoExiste) {
     const novoPreco = verificaNovoPreco(produtoUpload, produtosBD);
     if (novoPreco.valido) {
-      return { valido: true, message: 'ok' };
+      return [{ valido: true, message: 'ok' }];
     } else {
       return novoPreco;
     }
   } else {
-    return {
-      valido: false,
-      message: `O código ${produtoUpload.product_code} não esta cadastrado`,
-    };
+    return [
+      {
+        valido: false,
+        message: `O código ${produtoUpload.product_code} não esta cadastrado`,
+      },
+    ];
   }
 }
 
 export async function validandoPacote(produto, produtosUpload) {
-  const codigoProduto = parseInt(produto.product_code);
-  const hePacote = await verificaSeHePacote(codigoProduto);
+  try {
+    const codigoProduto = parseInt(produto.product_code);
+    const hePacote = await verificaSeHePacote(codigoProduto);
 
-  if (hePacote.valido) {
-    const idProdutosDoPacote = hePacote.rows.map((row) => {
-      return row.product_id;
-    });
-    const idProdutosUpload = produtosUpload.map((row) => {
-      return parseInt(row.product_code);
-    });
-    let idProdutoExiste = true;
-    for (const id of idProdutosDoPacote) {
-      idProdutoExiste = idProdutoExiste && idProdutosUpload.includes(id);
+    if (hePacote.valido) {
+      const idProdutosDoPacote = hePacote.rows.map((row) => {
+        return row.product_id;
+      });
+      const idProdutosUpload = produtosUpload.map((row) => {
+        return parseInt(row.product_code);
+      });
+
+      let idProdutoExiste = true;
+      for (const id of idProdutosDoPacote) {
+        idProdutoExiste = idProdutoExiste && idProdutosUpload.includes(id);
+      }
+      if (!idProdutoExiste) {
+        return {
+          ativo: false,
+          message: `Atualize os produtos do pacote ${codigoProduto}`,
+        };
+      } else {
+        const precoDoPacote = parseFloat(produto.new_price);
+        const produtosCorrespondentes = produtosUpload.filter((prod) =>
+          idProdutosDoPacote.includes(parseInt(prod.product_code))
+        );
+
+        const somaPrecoProdutosCorrespondentes = produtosCorrespondentes.reduce(
+          (acc, valor) => {
+            const valorNumerico = parseFloat(valor.new_price);
+            return acc + valorNumerico;
+          },
+          0
+        );
+
+        if (precoDoPacote === somaPrecoProdutosCorrespondentes) {
+          return { valido: true, message: 'ok' };
+        } else {
+          return {
+            valido: false,
+            message: 'valor do pacote diferente da soma do valor dos produtos',
+          };
+        }
+      }
     }
-    if (!idProdutoExiste) {
-      return {
-        ativo: false,
-        message: `Atualize os produtos do pacote ${codigoProduto}`,
-      };
-    } else {
-      return { ativo: true, message: 'ok' };
-    }
+    return;
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -57,7 +88,7 @@ export function verificaNovoPreco(produtosArquivoUpload, produtosBD) {
     const precoCusto = parseFloat(produtoCorrespondente.cost_price);
     const precoVenda = parseFloat(produtoCorrespondente.sales_price);
 
-    if (novoPreco < precoCusto) {
+    if (novoPreco < precoCusto || !novoPreco) {
       produtosComPrecoInvalido.push({
         valido: false,
         message: 'Novo preço menor que o preço de custo',
@@ -78,4 +109,26 @@ export function verificaNovoPreco(produtosArquivoUpload, produtosBD) {
   } else {
     return produtosComPrecoInvalido;
   }
+}
+
+export async function validaSeProdutoPertencePacote(produto, produtosUpload) {
+  const codigoProduto = parseInt(produto.product_code);
+  const pertenceAPacote = await verificaSeProdutoPertenceAPacote(codigoProduto);
+
+  if (pertenceAPacote.valido) {
+    const idDoPacote = pertenceAPacote.rows.map((row) => {
+      return row.pack_id;
+    });
+    const idProdutosUpload = produtosUpload.map((row) => {
+      return parseInt(row.product_code);
+    });
+    let idPacoteExiste = true;
+    for (const id of idDoPacote) {
+      idPacoteExiste = idPacoteExiste && idProdutosUpload.includes(id);
+    }
+    if (!idPacoteExiste) {
+      return { valido: false, message: `Atualize o pacote ${idDoPacote}` };
+    }
+  }
+  return;
 }
