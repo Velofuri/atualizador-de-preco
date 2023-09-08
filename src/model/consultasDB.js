@@ -11,4 +11,16 @@ export async function consultaTabelaProducts() {
   }
 }
 
-consultaTabelaProducts();
+export async function verificaSeHePacote(codigo) {
+  const query = `select * from products as p 
+  inner join packs as pa 
+  on p.code = pa.pack_id
+  where p.code = ${codigo};`;
+
+  const [rows] = await connection.promise().execute(query);
+  if (rows.length === 0) {
+    return { valido: false };
+  } else {
+    return { valido: true, rows };
+  }
+}

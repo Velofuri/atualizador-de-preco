@@ -10,7 +10,7 @@ export async function bufferStream(buffer) {
 
   streamBuffer.pipe(csvParser({ delimiter: ',' })).on('data', (data) => {
     if (!data.product_code || !data.new_price) {
-      console.log('Registro inválido');
+      console.log('Registro inválido', data);
     } else {
       result.push(data);
     }

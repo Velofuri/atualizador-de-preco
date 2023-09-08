@@ -1,9 +1,6 @@
-import { consultaTabelaProducts } from '../model/consultasDB.js';
+import { consultaTabelaProducts, verificaSeHePacote } from '../model/consultasDB.js';
 import { bufferStream } from '../service/bufferStream.js';
-import {
-  verificaNovoPreco,
-  verificaSeCodigoProdutoExiste,
-} from '../service/validacoes.js';
+import { respostaFront } from '../service/respostaFron.js';
 
 export async function recebeArquivoCsv(req, res) {
   if (!req.file) {
@@ -16,16 +13,7 @@ export async function recebeArquivoCsv(req, res) {
 
   const produtosDoBD = await consultaTabelaProducts();
 
-  const codigoInexistente = verificaSeCodigoProdutoExiste(produtosUpload, produtosDoBD); // retorna true ou uma lista com os codigos que não existem
+  const responseFront = await respostaFront(produtosUpload, produtosDoBD);
 
-  const produtoComPrecoInvalido = verificaNovoPreco(produtosUpload, produtosDoBD);
-
-  if (codigoInexistente.valido && produtoComPrecoInvalido.valido) {
-    return res.status(200).send('Validação finalizada, produtos validos');
-  } else {
-    res.status(400).json({
-      'preco invalido': produtoComPrecoInvalido,
-      'codigo inexistente': codigoInexistente,
-    });
-  }
+  return res.json(responseFront);
 }
