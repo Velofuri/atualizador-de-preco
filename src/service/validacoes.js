@@ -1,7 +1,4 @@
-import {
-  verificaSeHePacote,
-  verificaSeProdutoPertenceAPacote,
-} from '../model/consultasDB.js';
+import { verificaSeHePacote, verificaSeProdutoPertenceAPacote } from '../model/consultasDB.js';
 
 export function verificaCodigoEPreco(produtoUpload, produtosBD) {
   const codigoExiste = produtosBD.some(
@@ -30,6 +27,7 @@ export async function validandoPacote(produto, produtosUpload) {
     const hePacote = await verificaSeHePacote(codigoProduto);
 
     if (hePacote.valido) {
+      const quantidadeProdutoPacote = hePacote.rows[0].qty;
       const idProdutosDoPacote = hePacote.rows.map((row) => {
         return row.product_id;
       });
@@ -52,15 +50,16 @@ export async function validandoPacote(produto, produtosUpload) {
           idProdutosDoPacote.includes(parseInt(prod.product_code))
         );
 
-        const somaPrecoProdutosCorrespondentes = produtosCorrespondentes.reduce(
-          (acc, valor) => {
-            const valorNumerico = parseFloat(valor.new_price);
-            return acc + valorNumerico;
-          },
-          0
+        const somaPrecoProdutosCorrespondentes = produtosCorrespondentes.reduce((acc, valor) => {
+          const valorNumerico = parseFloat(valor.new_price);
+          return acc + valorNumerico * quantidadeProdutoPacote;
+        }, 0);
+
+        const somaPrecoProdutosCorrespondentesArredondado = Number(
+          somaPrecoProdutosCorrespondentes.toFixed(2)
         );
 
-        if (precoDoPacote === somaPrecoProdutosCorrespondentes) {
+        if (precoDoPacote === somaPrecoProdutosCorrespondentesArredondado) {
           return { valido: true, message: 'ok' };
         } else {
           return {
