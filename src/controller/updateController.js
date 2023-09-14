@@ -11,7 +11,7 @@ export async function updateController(req, res) {
     if (statusValidos) {
       const confirma = await updateTabelaProdutos(dados);
       if (confirma) {
-        res.status(201).send('Upload dos arquivos realizado com sucesso!');
+        res.status(200).send('Upload dos arquivos realizado com sucesso!');
       } else {
         res.status(500).send('Falha na atualização dos produtos');
       }
