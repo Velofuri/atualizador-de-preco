@@ -2,8 +2,6 @@
 
 **🚀 Este projeto foi desenvolvido para atender os requisitos de um teste tecnico**
 
-** Até o momento apenas o BackEnd esta pronto, FrontEnd estará pronto em breve **
-
 - [Funcionalidades](#funcionalidades)
 - [Configuração](#configuracao)
 - [Rotas](#rotas)
@@ -30,17 +28,19 @@ Siga as etapas abaixo para configurar o projeto em seu ambiente local:
 git clone https://github.com/Velofuri/atualizador-de-preco.git
 ```
 
+2. **acesse a pasta backend**
+
 3. **Instale as dependências do projeto:**
 ```nodejs
 npm install
 ```
 
-5. **Configure as variáveis de ambiente:**
+4. **Configure as variáveis de ambiente:**
 
 - Renomeie o arquivo `.env.example` para `.env`.
 - Preencha as variáveis de ambiente no arquivo `.env` com as informações do seu banco MYSQL local.
 
-4. **Execute o arquivo para criar o banco de dados:**
+5. **Execute o arquivo para criar o banco de dados:**
 ```nodejs
 node src/config/criarBancoDeDados.js
 ```
@@ -50,9 +50,19 @@ node src/config/criarBancoDeDados.js
 npm start
 ```
 
-8. **A API estará disponível localmente em `http://localhost:3001`.**
+7. **acesse a pasta front**
 
-9. **Utilize o arquivo.csv que esta junto do projeto para testar a aplicação**
+8. **Instale as dependências do projeto:**
+```nodejs
+npm install
+```
+
+9. **Execute o projeto:**
+```nodejs
+npm start
+```
+
+10. **Utilize o arquivo.csv que esta junto do projeto para testar a aplicação**
 
 ## <a id="rotas"></a>🛣️ Rotas
 
@@ -66,7 +76,7 @@ A API possui as seguintes rotas disponíveis:
 
 A seguir, estão as próximas etapas planejadas para o desenvolvimento deste projeto:
 
-- Implementar Frontend usando React.
+- Implementar Frontend usando React. (implementado)
 
 
 ## <a id="contato"></a>📧 Contato
