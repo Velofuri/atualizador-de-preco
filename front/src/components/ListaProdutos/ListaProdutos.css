@@ -1,0 +1,19 @@
+body {
+    font-family: sans-serif;
+}
+
+.lista-produtos th, td {
+    border: 1px solid #CCC;
+    padding: 8px;
+    text-align: center;
+
+}
+
+.lista-produtos table {
+    border-collapse: collapse;
+
+}
+
+.lista-produtos li {
+    list-style-type: circle;
+}
