@@ -59,7 +59,7 @@ export default function App() {
   }
 
   return (
-    <section className='bg-gray-300 bg-center drop-shadow-xl my-5 mx-10 rounded-2xl p-4'>
+    <section className='bg-gray-200 bg-center drop-shadow-xl my-5 mx-10 rounded-2xl p-4 '>
       <h1 className='text-4xl font-bold mb-6 text-center'>Atualizador de Preços</h1>
       <div className='flex justify-evenly items-center mb-6'>
         <Input type='file' setArquivoCsv={setArquivoCsv} />

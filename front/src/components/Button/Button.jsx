@@ -3,12 +3,12 @@ export default function Button({ onClick, children }) {
     <button
       onClick={onClick}
       className='
-      bg-blue-700
+      bg-green-700
       rounded-md
       px-8
       py-3
       text-white 
-      hover:bg-blue-600 
+      hover:bg-green-500
       duration-150
       '
     >
